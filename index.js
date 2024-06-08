@@ -55,7 +55,7 @@ const verifyUser = (req, res, next) => {
 
 async function run() {
   try {
-    await client.connect();
+    client.connect();
     const database = client.db("niyenindb");
     const fakeDataCollection = database.collection("fakeData");
     const productCollection = database.collection("productCollection");
