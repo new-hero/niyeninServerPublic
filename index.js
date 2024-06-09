@@ -16,7 +16,7 @@ app.use(express.json());
 app.use(cors());
 
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
-const uri = `${process.env.DB_URI}`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.dtcwl7u.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -63,7 +63,6 @@ async function run() {
     const orderCollection = database.collection("orderCollection");
     // const savedOrderCollection = database.collection("savedOrderCollection");
     const paymentCollection = database.collection("paymentCollection");
-    console.log('connect')
 
     const verifyAdmin = async (req, res, next) => {
       const email = req.user.email;
@@ -100,7 +99,7 @@ async function run() {
     });
     app.get("/products", async (req, res) => {
       const filterQuery = req?.query?.filter;
-      let products =[]
+      let products;
       if (filterQuery == "bestMatch") {
         products = await fakeDataCollection.find().sort({ name: 1 }).toArray();
       } else if (filterQuery == "piceHighToLow") {
@@ -110,7 +109,7 @@ async function run() {
           .toArray();
       } else if (filterQuery == "priceLowToHigh") {
         products = await fakeDataCollection.find().sort({ price: 1 }).toArray();
-      }else{
+      } else {
         products = await fakeDataCollection.find().toArray();
       }
       return res.send(products);
@@ -280,8 +279,8 @@ async function run() {
       const doc = req.body;
       const result = await orderCollection.updateOne(filter, {
         $set: {
-          ...doc
-        }
+          ...doc,
+        },
       });
       return res.send(result);
     });
@@ -311,21 +310,21 @@ async function run() {
       const email = req.body.email;
       const query = { email: email };
       const exist = await userCollection.findOne(query);
-      if (exist) {
-        return;
+      if (!exist) {
+        const result = await userCollection.insertOne(user);
+        return res.send(result);
       }
-      const result = await userCollection.insertOne(user);
-      return res.send(result);
+      return res.send({ message: "user exist in db" });
     });
 
     app.put("/user", verifyUser, async (req, res) => {
       const query = { email: req.user.email };
-      const address=req.body;
+      const address = req.body;
       const options = { upsert: true };
       const doc = {
         $set: {
           address: {
-           ...address
+            ...address,
           },
         },
       };
@@ -333,16 +332,15 @@ async function run() {
       const result = await userCollection.updateOne(query, doc, options);
       return res.send(result);
     });
-  
-    
+
     app.patch("/user/:id", verifyUser, async (req, res) => {
       const id = req.params.id;
       const filter = { _id: ObjectId(id) };
       const doc = req.body;
-      const result = await userCollection.updateOne(filter,{
-        $set:{
-          ...doc
-        }
+      const result = await userCollection.updateOne(filter, {
+        $set: {
+          ...doc,
+        },
       });
       return res.send(result);
     });
@@ -355,14 +353,13 @@ async function run() {
       });
       return res.send(payments);
     });
-    
+
     // add product
-    app.post("/products", verifyUser,verifyAdmin, async (req, res) => {
+    app.post("/products", verifyUser, verifyAdmin, async (req, res) => {
       const product = req.body;
       const result = await productCollection.insertOne(product);
       return res.send(result);
     });
-
   } finally {
     // await client.close();
   }
