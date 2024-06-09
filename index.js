@@ -55,7 +55,7 @@ const verifyUser = (req, res, next) => {
 
 async function run() {
   try {
-    await client.connect();
+    client.connect();
     const database = client.db("niyenindb");
     const fakeDataCollection = database.collection("fakeData");
     const productCollection = database.collection("productCollection");
@@ -176,10 +176,10 @@ async function run() {
         total_amount: order.amount,
         currency: order.currency,
         tran_id: tran_id,
-        success_url: `${process.env.SERVER_URL}/payment/success?tran_id=${tran_id}`,
-        fail_url: `${process.env.SERVER_URL}/payment/fail?tran_id=${tran_id}`,
-        cancel_url: `${process.env.SERVER_URL}/payment/cancel?tran_id=${tran_id}`,
-        ipn_url: `${process.env.SERVER_URL}/payment/ipn`,
+        success_url: `https://niyenin-server-public.vercel.app/payment/success?tran_id=${tran_id}`,
+        fail_url: `https://niyenin-server-public.vercel.app/payment/fail?tran_id=${tran_id}`,
+        cancel_url: `https://niyenin-server-public.vercel.app/payment/cancel?tran_id=${tran_id}`,
+        ipn_url: `https://niyenin-server-public.vercel.app/payment/ipn`,
         shipping_method: "Courier",
         product_name: "Computer.",
         product_category: "Electronic",
@@ -226,7 +226,7 @@ async function run() {
       );
       if (result.modifiedCount > 0) {
         res.redirect(
-          `${process.env.ClIENT_URL}/payment/success?tran_id=${tran_id}`
+          `https://only-for-firebase-practice.web.app/payment/success?tran_id=${tran_id}`
         );
       }
     });
@@ -245,7 +245,7 @@ async function run() {
         }
       );
       if (result.modifiedCount > 0) {
-        res.redirect(`${process.env.ClIENT_URL}/payment/fail`);
+        res.redirect(`https://only-for-firebase-practice.web.app/payment/fail`);
       }
     });
     app.post("/payment/cancel", async (req, res) => {
@@ -262,7 +262,7 @@ async function run() {
         }
       );
       if (result.modifiedCount > 0) {
-        res.redirect(`${process.env.ClIENT_URL}/payment/cancel`);
+        res.redirect(`https://only-for-firebase-practice.web.app/payment/cancel`);
       }
     });
     app.get("/order/:tran_id", verifyUser, async (req, res) => {
