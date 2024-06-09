@@ -227,7 +227,7 @@ async function run() {
       );
       if (result.modifiedCount > 0) {
         res.redirect(
-          `https://only-for-firebase-practice.web.app/payment/success?tran_id=${tran_id}`
+          `https://niyenin-public-app.web.app/payment/success?tran_id=${tran_id}`
         );
       }
     });
@@ -246,7 +246,7 @@ async function run() {
         }
       );
       if (result.modifiedCount > 0) {
-        res.redirect(`https://only-for-firebase-practice.web.app/payment/fail`);
+        res.redirect(`https://niyenin-public-app.web.app/payment/fail`);
       }
     });
     app.post("/payment/cancel", async (req, res) => {
@@ -263,7 +263,7 @@ async function run() {
         }
       );
       if (result.modifiedCount > 0) {
-        res.redirect(`https://only-for-firebase-practice.web.app/payment/cancel`);
+        res.redirect(`https://niyenin-public-app.web.app/payment/cancel`);
       }
     });
     app.get("/order/:tran_id", verifyUser, async (req, res) => {
