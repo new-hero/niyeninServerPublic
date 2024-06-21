@@ -99,18 +99,27 @@ async function run() {
     });
     app.get("/products", async (req, res) => {
       const filterQuery = req?.query?.filter;
+      const search = req?.query?.search;
       let products;
       if (filterQuery == "bestMatch") {
-        products = await fakeDataCollection.find().sort({ name: 1 }).toArray();
+        products = await fakeDataCollection
+          .find({ name: { $regex: search, $options: "i" } })
+          .sort({ name: 1 })
+          .toArray();
       } else if (filterQuery == "piceHighToLow") {
         products = await fakeDataCollection
           .find()
           .sort({ price: -1 })
           .toArray();
       } else if (filterQuery == "priceLowToHigh") {
-        products = await fakeDataCollection.find().sort({ price: 1 }).toArray();
+        products = await fakeDataCollection
+          .find({ name: { $regex: search, $options: "i" } })
+          .sort({ price: 1 })
+          .toArray();
       } else {
-        products = await fakeDataCollection.find().toArray();
+        products = await fakeDataCollection
+          .find({ name: { $regex: search, $options: "i" } })
+          .toArray();
       }
       return res.send(products);
     });
@@ -262,7 +271,9 @@ async function run() {
         }
       );
       if (result.modifiedCount > 0) {
-        res.redirect(`https://only-for-firebase-practice.web.app/payment/cancel`);
+        res.redirect(
+          `https://only-for-firebase-practice.web.app/payment/cancel`
+        );
       }
     });
     app.get("/order/:tran_id", verifyUser, async (req, res) => {
