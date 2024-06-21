@@ -108,7 +108,7 @@ async function run() {
           .toArray();
       } else if (filterQuery == "piceHighToLow") {
         products = await fakeDataCollection
-          .find()
+          .find({ name: { $regex: search, $options: "i" } })
           .sort({ price: -1 })
           .toArray();
       } else if (filterQuery == "priceLowToHigh") {
