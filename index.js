@@ -271,7 +271,7 @@ async function run() {
         }
       );
       if (result.modifiedCount > 0) {
-        res.redirect(`https://only-for-firebase-practice.web.app/payment/cancel`);
+        res.redirect(`https://niyenin-public-app.web.app/payment/cancel`);
       }
     });
     app.get("/order/:tran_id", verifyUser, async (req, res) => {
